@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient.js"; // Un seul point "."
+import { supabase } from "../supabaseClient.js"; // Un seul point "."
 
 export default function HotelDashboard({ hotelId }) {
   const [bookings, setBookings] = useState([]);
@@ -21,7 +21,7 @@ export default function HotelDashboard({ hotelId }) {
       const { data, error } = await supabase
         .from("bookings")
         .select("*")
-        .eq("establishment_id", hotelId)
+       .eq("establishment_id", hotelId || "")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -69,13 +69,15 @@ export default function HotelDashboard({ hotelId }) {
     });
   }
 
-  useEffect(() => {
-    if (hotelId) {
-      loadBookings();
-    } else {
-      setLoading(false);
-    }
-  }, [hotelId]);
+useEffect(() => {
+  if (!hotelId) return;
+  loadBookings();
+}, [hotelId]);
+
+async function loadBookings() {
+  if (!hotelId) return;
+  setLoading(true);
+}
 
   // =========================
   // UPDATE STATUS

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from './pages/supabaseClient';
+import { supabase } from './supabaseClient';
 import HotelDashboard from "./pages/HotelDashboard";
 
 // Components
@@ -101,12 +101,13 @@ function App() {
 
       {currentPage === "home" && (
 
-        <Hero
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedCity={selectedCity}
-          setSelectedCity={setSelectedCity}
-        />
+<Hero
+  searchQuery={searchQuery}
+  setSearchQuery={setSearchQuery}
+  selectedCity={selectedCity}
+  setSelectedCity={setSelectedCity}
+  setCurrentPage={setCurrentPage}   // 🔥 AJOUTE ÇA
+/>
 
       )}
 
@@ -157,12 +158,8 @@ function App() {
             )}
 
             {currentPage === "admin-hotel" && (
-
-              <HotelDashboard
-                hotelId={currentUser?.id}
-              />
-
-            )}
+  <HotelDashboard hotelId={currentUser?.id} />
+)}
 
             {currentPage === 'restaurants' && (
 

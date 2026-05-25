@@ -1,10 +1,13 @@
 import React from "react";
 
 export default function Hero({
+  currentPage,
+  setCurrentPage,
   searchQuery,
   setSearchQuery,
-  setCurrentPage
-}) {
+  selectedCity,
+  setSelectedCity
+}){
 
   return (
     <header className="relative h-[85vh] flex items-center justify-center overflow-hidden">

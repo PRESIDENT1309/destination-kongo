@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../pages/supabaseClient';
+import { supabase } from '../supabaseClient';
 
 export default function AuthModal({ setShowAuthModal, setCurrentUser }) {
   const [authEmail, setAuthEmail] = useState('');

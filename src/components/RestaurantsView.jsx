@@ -1,13 +1,10 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, MapPin, Heart, Utensils } from "lucide-react";
 
 export default function RestaurantsView({
   establishments = [],
   setViewedPlace,
-  setSelectedPlace,
 }) {
-
-  console.log("ALL DATA =", establishments);
 
   // 🔥 filtrer restaurants
   const restaurants = useMemo(() => {
@@ -17,8 +14,6 @@ export default function RestaurantsView({
       (item?.type || "").trim().toLowerCase() === "restaurant"
     );
   }, [establishments]);
-
-  console.log("RESTAURANTS =", restaurants);
 
   // 🔍 search
   const [search, setSearch] = useState("");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import HotelDashboard from "./pages/HotelDashboard";
 
@@ -40,10 +40,11 @@ function App() {
 
   const [booking, setBooking] = useState(null);
 
-  useEffect(() => {
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(page);
     setSearchQuery('');
     setSelectedCity('Toutes');
-  }, [currentPage]);
+  }, []);
 
   useEffect(() => {
 
@@ -93,7 +94,7 @@ function App() {
 
       <Navbar
         currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+        setCurrentPage={handlePageChange}
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
         setShowAuthModal={setShowAuthModal}
@@ -104,9 +105,7 @@ function App() {
 <Hero
   searchQuery={searchQuery}
   setSearchQuery={setSearchQuery}
-  selectedCity={selectedCity}
-  setSelectedCity={setSelectedCity}
-  setCurrentPage={setCurrentPage}   // 🔥 AJOUTE ÇA
+  setCurrentPage={handlePageChange}
 />
 
       )}
@@ -135,7 +134,7 @@ function App() {
 
                 <HomeView
                   establishments={establishments}
-                  setCurrentPage={setCurrentPage}
+                  setCurrentPage={handlePageChange}
                   setViewedPlace={setViewedPlace}
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
@@ -213,7 +212,7 @@ function App() {
 
       <Footer
         currentPage={currentPage}
-        onNavigate={setCurrentPage}
+        onNavigate={handlePageChange}
       />
 
       {selectedPlace && (

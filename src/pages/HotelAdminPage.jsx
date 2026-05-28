@@ -1,4 +1,3 @@
-import React from "react";
 import HotelDashboard from "../components/admin/HotelDashboard";
 
 export default function HotelAdminPage() {

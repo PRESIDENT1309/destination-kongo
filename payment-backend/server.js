@@ -4,10 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
-import { sendWhatsApp } from "./whatsapp.js";
-import { sendEmail } from "./email.js";
-import { generateInvoice } from "./invoice.js";
-import statsRouter from "./routes/stats.js";
+import { sendWhatsApp } from "./services/whatsapp.js";
+import { sendEmail } from "./services/email.js";
+import { generateInvoice } from "./services/invoice.js";
+import statsRouter from "./services/stats.js";
 
 dotenv.config();
 
@@ -82,6 +82,7 @@ app.post("/payment/create", async (req, res) => {
         hotel_id,
         hotel_name,
         user_name,
+        user_email,
         phone,
         amount,
 

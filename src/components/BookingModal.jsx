@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
 export default function BookingModal({
@@ -47,10 +47,12 @@ export default function BookingModal({
 
  async function handleSubmit(e) {
   e.preventDefault();
+  setSaving(true);
 
   const code = generateBookingCode();
 
 const booking = {
+  code,
   establishment_id: selectedPlace?.owner_id,
   type: selectedPlace?.type,
   place: selectedPlace?.name,
@@ -84,6 +86,8 @@ const booking = {
   } catch (err) {
     console.error("Booking error:", err.message);
     alert("Erreur lors de la réservation");
+  } finally {
+    setSaving(false);
   }
 }
 

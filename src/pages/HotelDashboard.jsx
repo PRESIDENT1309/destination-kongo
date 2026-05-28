@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient.js"; // Un seul point "."
+import { useCallback, useEffect, useState } from "react";
+import { supabase } from "../supabaseClient.js";
 
 export default function HotelDashboard({ hotelId }) {
   const [bookings, setBookings] = useState([]);
@@ -15,7 +15,42 @@ export default function HotelDashboard({ hotelId }) {
   // =========================
   // LOAD BOOKINGS
   // =========================
-  async function loadBookings() {
+  const computeStats = useCallback((data) => {
+    const total = data.length;
+
+    const pending = data.filter(
+      b => b?.status === "pending"
+    ).length;
+
+    const paid = data.filter(
+      b => b?.payment_status === "paid" || b?.status === "paid"
+    ).length;
+
+    const revenue = data
+      .filter(
+        b => b?.payment_status === "paid" || b?.status === "paid"
+      )
+      .reduce(
+        (sum, b) => sum + Number(b?.amount || 0),
+        0
+      );
+
+    setStats({
+      total,
+      pending,
+      paid,
+      revenue
+    });
+  }, []);
+
+  const loadBookings = useCallback(async () => {
+    if (!hotelId) {
+      setBookings([]);
+      computeStats([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -36,48 +71,15 @@ export default function HotelDashboard({ hotelId }) {
     } finally {
       setLoading(false);
     }
-  }
-
-  // =========================
-  // STATS
-  // =========================
-  function computeStats(data) {
-    const total = data.length;
-
-    const pending = data.filter(
-      b => b?.status === "pending"
-    ).length;
-
-    const paid = data.filter(
-      b => b?.payment_status === "paid"
-    ).length;
-
-    const revenue = data
-      .filter(
-        b => b?.payment_status === "paid"
-      )
-      .reduce(
-        (sum, b) => sum + Number(b?.amount || 0),
-        0
-      );
-
-    setStats({
-      total,
-      pending,
-      paid,
-      revenue
-    });
-  }
+  }, [computeStats, hotelId]);
 
 useEffect(() => {
-  if (!hotelId) return;
-  loadBookings();
-}, [hotelId]);
+  const timeoutId = window.setTimeout(() => {
+    loadBookings();
+  }, 0);
 
-async function loadBookings() {
-  if (!hotelId) return;
-  setLoading(true);
-}
+  return () => window.clearTimeout(timeoutId);
+}, [loadBookings]);
 
   // =========================
   // UPDATE STATUS

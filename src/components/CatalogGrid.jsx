@@ -1,5 +1,3 @@
-import React from 'react';
-
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=500&q=80';
 
 export default function CatalogGrid({ establishments, currentPage, setCurrentPage, searchQuery, selectedCity, setViewedPlace, setSelectedPlace, loading }) {

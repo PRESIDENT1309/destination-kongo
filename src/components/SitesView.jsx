@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Search,
   MapPin,
@@ -12,18 +12,15 @@ export default function SitesView({
   setViewedPlace,
 }) {
 
-  console.log("ALL ESTABLISHMENTS =", establishments);
-
   // 🔥 FILTRAGE SITES (SAFE)
   const sites = useMemo(() => {
     if (!Array.isArray(establishments)) return [];
 
-    return establishments.filter((item) =>
-      (item?.type || "").trim().toLowerCase() === "site"
-    );
+    return establishments.filter((item) => {
+      const type = (item?.type || "").trim().toLowerCase();
+      return type === "site" || type === "tourist_site";
+    });
   }, [establishments]);
-
-  console.log("FILTERED SITES =", sites);
 
   // 🔍 SEARCH
   const [search, setSearch] = useState("");

@@ -1,12 +1,7 @@
-import React from "react";
-
 export default function Hero({
-  currentPage,
   setCurrentPage,
   searchQuery,
   setSearchQuery,
-  selectedCity,
-  setSelectedCity
 }){
 
   return (
@@ -16,6 +11,7 @@ export default function Hero({
       <img
         src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
         className="absolute inset-0 w-full h-full object-cover scale-105"
+        alt="Paysage naturel en RDC"
       />
 
       {/* OVERLAY PREMIUM */}

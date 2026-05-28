@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, MapPin, Heart, Hotel } from "lucide-react";
 
 export default function HotelsView({

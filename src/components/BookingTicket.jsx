@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function BookingTicket({ booking, onClose }) {
   if (!booking) return null;
 

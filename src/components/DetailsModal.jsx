@@ -1,30 +1,3 @@
-import React from 'react';
-
-const handlePayment = async () => {
-  const res = await fetch("http://localhost:3001/payment/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      hotel_id: hotel.id,
-      hotel_name: hotel.name,
-      amount: hotel.price_per_night,
-      user_name: "Guest",
-      phone: "243000000000",
-      check_in: "2026-01-01",
-      check_out: "2026-01-02",
-      travelers: 2
-    })
-  });
-
-  const data = await res.json();
-
-  if (data.payment_url) {
-    window.location.href = data.payment_url;
-  }
-};
-
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=500&q=80';
 
 export default function DetailsModal({ viewedPlace, setViewedPlace, setSelectedPlace }) {

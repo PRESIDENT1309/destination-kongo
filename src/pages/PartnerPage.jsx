@@ -1,4 +1,79 @@
+import { useState } from "react";
+import { supabase } from "../supabaseClient";
+
+const INITIAL_FORM = {
+  establishment_name: "",
+  city: "",
+  professional_email: "",
+  description: "",
+  rccm_url: "",
+  id_nat_url: "",
+  licence_url: "",
+  photos_url: "",
+};
+
 export default function PartnerPage() {
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [saving, setSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+
+  function handleChange(event) {
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setSaving(true);
+    setStatusMessage("");
+
+    try {
+      const payload = {
+        establishment_name: form.establishment_name,
+        city: form.city,
+        professional_email: form.professional_email,
+        description: form.description,
+        rccm_url: form.rccm_url || null,
+        id_nat_url: form.id_nat_url || null,
+        licence_url: form.licence_url || null,
+        photos_url: form.photos_url || null,
+        status: "pending",
+      };
+
+      const fallbackPayload = {
+        establishment_name: form.establishment_name,
+        city: form.city,
+        professional_email: form.professional_email,
+        description: form.description,
+        status: "pending",
+      };
+
+      const { error } = await supabase
+        .from("partner_applications")
+        .insert([payload]);
+
+      if (error?.message?.toLowerCase().includes("column")) {
+        const retry = await supabase
+          .from("partner_applications")
+          .insert([fallbackPayload]);
+
+        if (retry.error) throw retry.error;
+      } else if (error) {
+        throw error;
+      }
+
+      setForm(INITIAL_FORM);
+      setStatusMessage("Demande envoyée à l'administration.");
+    } catch (error) {
+      console.error("Partner application error:", error.message);
+      setStatusMessage("Impossible d'enregistrer la demande. Vérifie la table partner_applications dans Supabase.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
 
@@ -17,10 +92,6 @@ export default function PartnerPage() {
             Rejoignez Destination Kongo et faites découvrir votre établissement à des milliers de voyageurs chaque jour.
           </p>
 
-          <button className="mt-8 bg-white text-black px-8 py-4 rounded-2xl font-bold hover:scale-105 transition">
-            Commencer maintenant
-          </button>
-
         </div>
       </div>
 
@@ -37,19 +108,19 @@ export default function PartnerPage() {
           <div className="space-y-4">
 
             <div className="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-              ✔ Visibilité nationale et internationale
+              Visibilité nationale et internationale
             </div>
 
             <div className="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-              ✔ Système de réservation intelligent
+              Système de réservation intelligent
             </div>
 
             <div className="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-              ✔ Paiements sécurisés (Mobile Money & Carte)
+              Paiements sécurisés (Mobile Money & Carte)
             </div>
 
             <div className="bg-white p-5 rounded-2xl shadow hover:shadow-lg transition">
-              ✔ Dashboard partenaire complet
+              Dashboard partenaire connecté à l'administration
             </div>
 
           </div>
@@ -57,7 +128,7 @@ export default function PartnerPage() {
         </div>
 
         {/* RIGHT FORM */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border">
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl p-8 border">
 
           <h2 className="text-2xl font-black mb-6">
             Demande de partenariat
@@ -66,32 +137,92 @@ export default function PartnerPage() {
           <div className="space-y-4">
 
             <input
+              name="establishment_name"
+              value={form.establishment_name}
+              onChange={handleChange}
+              required
               className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Nom de l'établissement"
             />
 
             <input
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              required
               className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Ville"
             />
 
             <input
+              name="professional_email"
+              type="email"
+              value={form.professional_email}
+              onChange={handleChange}
+              required
               className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Email professionnel"
             />
 
             <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              required
               className="w-full border p-4 rounded-xl h-28 focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Décrivez votre établissement..."
             />
 
-            <button className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition">
-              Envoyer la demande
+            <div className="grid sm:grid-cols-2 gap-3">
+              <input
+                name="rccm_url"
+                value={form.rccm_url}
+                onChange={handleChange}
+                className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Lien RCCM"
+              />
+
+              <input
+                name="id_nat_url"
+                value={form.id_nat_url}
+                onChange={handleChange}
+                className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Lien ID Nat"
+              />
+
+              <input
+                name="licence_url"
+                value={form.licence_url}
+                onChange={handleChange}
+                className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Lien licence"
+              />
+
+              <input
+                name="photos_url"
+                value={form.photos_url}
+                onChange={handleChange}
+                className="w-full border p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Lien photos"
+              />
+            </div>
+
+            <button
+              disabled={saving}
+              className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition disabled:opacity-60"
+            >
+              {saving ? "Envoi..." : "Envoyer la demande"}
             </button>
+
+            {statusMessage && (
+              <p className="text-sm font-semibold text-gray-700">
+                {statusMessage}
+              </p>
+            )}
 
           </div>
 
-        </div>
+        </form>
 
       </div>
 

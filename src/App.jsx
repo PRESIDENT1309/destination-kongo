@@ -23,6 +23,8 @@ import BookingTicket from "./components/BookingTicket";
 import PartnerPage from "./pages/PartnerPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import { syncUserProfile } from "./lib/account";
 
 function App() {
 
@@ -37,6 +39,7 @@ function App() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState(null);
 
   const [booking, setBooking] = useState(null);
 
@@ -86,7 +89,40 @@ function App() {
 
       });
 
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setCurrentUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+
   }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadProfile() {
+      if (!currentUser) {
+        setCurrentProfile(null);
+        return;
+      }
+
+      const profile = await syncUserProfile(currentUser);
+
+      if (!ignore) {
+        setCurrentProfile(profile);
+      }
+    }
+
+    loadProfile();
+
+    return () => {
+      ignore = true;
+    };
+  }, [currentUser]);
 
   return (
 
@@ -97,6 +133,7 @@ function App() {
         setCurrentPage={handlePageChange}
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
+        currentProfile={currentProfile}
         setShowAuthModal={setShowAuthModal}
       />
 
@@ -159,6 +196,14 @@ function App() {
             {currentPage === "admin-hotel" && (
   <HotelDashboard hotelId={currentUser?.id} />
 )}
+
+            {currentPage === "admin" && (
+              <AdminDashboard
+                currentUser={currentUser}
+                currentProfile={currentProfile}
+                onRequireAuth={() => setShowAuthModal(true)}
+              />
+            )}
 
             {currentPage === 'restaurants' && (
 

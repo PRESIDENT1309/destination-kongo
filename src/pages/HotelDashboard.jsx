@@ -53,11 +53,25 @@ export default function HotelDashboard({ hotelId }) {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data: ownedEstablishments } = await supabase
+        .from("establishments")
+        .select("id")
+        .eq("owner_id", hotelId);
+
+      const establishmentIds = (ownedEstablishments || [])
+        .map((item) => item?.id)
+        .filter(Boolean);
+
+      let query = supabase
         .from("bookings")
         .select("*")
-       .eq("establishment_id", hotelId || "")
         .order("created_at", { ascending: false });
+
+      query = establishmentIds.length > 0
+        ? query.in("establishment_id", establishmentIds)
+        : query.eq("establishment_id", hotelId || "");
+
+      const { data, error } = await query;
 
       if (error) throw error;
 

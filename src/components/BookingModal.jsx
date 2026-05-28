@@ -45,6 +45,62 @@ export default function BookingModal({
     });
   }
 
+  function isMissingColumnError(error) {
+    return error?.message?.toLowerCase().includes("column");
+  }
+
+  async function createBooking(bookingPayload, legacyPayload) {
+    const { data, error } = await supabase
+      .from("bookings")
+      .insert([bookingPayload])
+      .select("*")
+      .maybeSingle();
+
+    if (!error) return data || bookingPayload;
+
+    if (!isMissingColumnError(error)) throw error;
+
+    const fallback = await supabase
+      .from("bookings")
+      .insert([legacyPayload])
+      .select("*")
+      .maybeSingle();
+
+    if (fallback.error) throw fallback.error;
+
+    return fallback.data || legacyPayload;
+  }
+
+  async function notifyEstablishment(savedBooking, message) {
+    const ownerId = selectedPlace?.owner_id;
+
+    if (!ownerId) return;
+
+    await Promise.allSettled([
+      supabase
+        .from("notifications")
+        .insert([{
+          recipient_id: ownerId,
+          type: "booking",
+          title: "Nouvelle réservation",
+          message: `${savedBooking?.place || selectedPlace?.name} a reçu une nouvelle demande.`,
+          status: "unread",
+          booking_id: savedBooking?.id ? String(savedBooking.id) : null,
+          establishment_id: selectedPlace?.id ? String(selectedPlace.id) : null,
+        }]),
+      supabase
+        .from("messages")
+        .insert([{
+          sender_name: `${form.prenom || ""} ${form.nom || ""}`.trim() || "Client",
+          recipient_id: ownerId,
+          establishment_id: selectedPlace?.id ? String(selectedPlace.id) : null,
+          booking_id: savedBooking?.id ? String(savedBooking.id) : null,
+          channel: "booking",
+          content: message || "Nouvelle demande de réservation.",
+        }]),
+    ]);
+  }
+
  async function handleSubmit(e) {
   e.preventDefault();
   setSaving(true);
@@ -53,7 +109,31 @@ export default function BookingModal({
 
 const booking = {
   code,
-  establishment_id: selectedPlace?.owner_id,
+  establishment_id: selectedPlace?.id || selectedPlace?.owner_id,
+  establishment_owner_id: selectedPlace?.owner_id || null,
+  type: selectedPlace?.type,
+  place: selectedPlace?.name,
+  amount: selectedPlace?.price_per_night || selectedPlace?.price || 0,
+
+  nom: form.nom,
+  postnom: form.postnom,
+  prenom: form.prenom,
+
+  email: form.email,
+  phone: `${form.country_code || "+243"}${form.phone}`,
+  message: form.message || "",
+
+  check_in: form.check_in || null,
+  check_out: form.check_out || null,
+
+  status: "pending",
+  payment_status: "pending",
+  qr_payload: code
+};
+
+const legacyBooking = {
+  code,
+  establishment_id: selectedPlace?.owner_id || selectedPlace?.id,
   type: selectedPlace?.type,
   place: selectedPlace?.name,
 
@@ -72,13 +152,15 @@ const booking = {
 
   try {
     // 🔥 ENVOI SUPABASE
-    const { error } = await supabase
-      .from("bookings")
-      .insert([booking]);
+    const savedBooking = await createBooking(booking, legacyBooking);
 
-    if (error) throw error;
+    await notifyEstablishment(savedBooking, form.message);
 
-    setBooking(booking);
+    setBooking({
+      ...booking,
+      ...savedBooking,
+      code,
+    });
     setSelectedPlace(null);
 
     alert(`Réservation confirmée 🎉\nCode: ${code}`);
@@ -210,6 +292,13 @@ const booking = {
               </div>
             </>
           )}
+
+          <textarea
+            name="message"
+            placeholder="Message ou demande spéciale"
+            onChange={handleChange}
+            className="w-full border p-3 rounded-xl h-24"
+          />
 
           <button
             disabled={saving}

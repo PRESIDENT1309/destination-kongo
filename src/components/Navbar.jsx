@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { isAdminUser } from '../lib/account';
 
 export default function Navbar({
   currentPage,
   setCurrentPage,
   currentUser,
   setCurrentUser,
+  currentProfile,
   setShowAuthModal
 }) {
 
@@ -20,6 +22,12 @@ export default function Navbar({
     { id: 'about', label: 'À Propos' },
     { id: 'contact', label: 'Contact' },
   ];
+
+  const isAdmin = isAdminUser(currentUser, currentProfile);
+
+  const visibleMenuItems = isAdmin
+    ? [...menuItems, { id: 'admin', label: 'Administration' }]
+    : menuItems;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -54,7 +62,7 @@ export default function Navbar({
           {/* MENU DESKTOP */}
           <div className="hidden lg:flex items-center space-x-8">
 
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id)}
@@ -109,7 +117,7 @@ export default function Navbar({
         <div className="lg:hidden bg-white border-t">
           <div className="px-4 py-4 space-y-3">
 
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => {
@@ -128,7 +136,10 @@ export default function Navbar({
 
             {/* ADMIN */}
             <button
-              onClick={() => setCurrentPage("admin-hotel")}
+              onClick={() => {
+                setCurrentPage("admin-hotel");
+                setIsMenuOpen(false);
+              }}
               className="block w-full text-left px-4 py-2 text-gray-700"
             >
               Dashboard Hôtel

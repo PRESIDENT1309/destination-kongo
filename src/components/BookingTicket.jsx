@@ -14,6 +14,14 @@ export default function BookingTicket({ booking, onClose }) {
     .filter(Boolean)
     .join(" ");
 
+  const qrPayload =
+    booking.qr_payload ||
+    booking.code ||
+    `${booking.place || "booking"}-${booking.phone || ""}`;
+
+  const qrUrl =
+    `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(qrPayload)}`;
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
 
@@ -82,6 +90,17 @@ export default function BookingTicket({ booking, onClose }) {
             <p className="font-bold text-lg">
               {booking.place || "Inconnu"}
             </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Statut : {booking.status || "pending"}
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <img
+              src={qrUrl}
+              alt={`QR code ${booking.code || ""}`}
+              className="w-32 h-32 border rounded-xl p-2 bg-white"
+            />
           </div>
 
           {/* DETAILS */}

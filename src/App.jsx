@@ -23,8 +23,6 @@ import BookingTicket from "./components/BookingTicket";
 import PartnerPage from "./pages/PartnerPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import { syncUserProfile } from "./lib/account";
 
 function App() {
 
@@ -39,7 +37,6 @@ function App() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [currentProfile, setCurrentProfile] = useState(null);
 
   const [booking, setBooking] = useState(null);
 
@@ -47,6 +44,14 @@ function App() {
     setCurrentPage(page);
     setSearchQuery('');
     setSelectedCity('Toutes');
+  }, []);
+
+  const handlePageChangeWithOptions = useCallback((page, options = {}) => {
+    setCurrentPage(page);
+    if (!options.preserveFilters) {
+      setSearchQuery('');
+      setSelectedCity('Toutes');
+    }
   }, []);
 
   useEffect(() => {
@@ -89,40 +94,7 @@ function App() {
 
       });
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setCurrentUser(session?.user || null);
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-
   }, []);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function loadProfile() {
-      if (!currentUser) {
-        setCurrentProfile(null);
-        return;
-      }
-
-      const profile = await syncUserProfile(currentUser);
-
-      if (!ignore) {
-        setCurrentProfile(profile);
-      }
-    }
-
-    loadProfile();
-
-    return () => {
-      ignore = true;
-    };
-  }, [currentUser]);
 
   return (
 
@@ -133,7 +105,6 @@ function App() {
         setCurrentPage={handlePageChange}
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
-        currentProfile={currentProfile}
         setShowAuthModal={setShowAuthModal}
       />
 
@@ -142,7 +113,7 @@ function App() {
 <Hero
   searchQuery={searchQuery}
   setSearchQuery={setSearchQuery}
-  setCurrentPage={handlePageChange}
+  setCurrentPage={handlePageChangeWithOptions}
 />
 
       )}
@@ -167,8 +138,6 @@ function App() {
 
             {currentPage === 'home' && (
 
-              <div className="max-w-7xl mx-auto px-4 py-16">
-
                 <HomeView
                   establishments={establishments}
                   setCurrentPage={handlePageChange}
@@ -179,14 +148,13 @@ function App() {
                   setSelectedCity={setSelectedCity}
                 />
 
-              </div>
-
             )}
 
             {currentPage === 'hotels' && (
 
               <HotelsView
                 establishments={establishments}
+                searchQuery={searchQuery}
                 setViewedPlace={setViewedPlace}
                 setSelectedPlace={setSelectedPlace}
               />
@@ -197,17 +165,7 @@ function App() {
   <HotelDashboard hotelId={currentUser?.id} />
 )}
 
-            {currentPage === "admin" && (
-              <AdminDashboard
-                currentUser={currentUser}
-                currentProfile={currentProfile}
-                onRequireAuth={() => setShowAuthModal(true)}
-              />
-            )}
-
             {currentPage === 'restaurants' && (
-
-              <div className="max-w-7xl mx-auto px-4 py-16">
 
                 <RestaurantsView
                   establishments={establishments}
@@ -217,13 +175,9 @@ function App() {
                   setSelectedPlace={setSelectedPlace}
                 />
 
-              </div>
-
             )}
 
             {currentPage === 'sites' && (
-
-              <div className="max-w-7xl mx-auto px-4 py-16">
 
                 <SitesView
                   establishments={establishments}
@@ -232,8 +186,6 @@ function App() {
                   setViewedPlace={setViewedPlace}
                   setSelectedPlace={setSelectedPlace}
                 />
-
-              </div>
 
             )}
 

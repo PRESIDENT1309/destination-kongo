@@ -1,150 +1,164 @@
 import { useState } from 'react';
+import { LogOut, Menu, UserRound, X } from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import { isAdminUser } from '../lib/account';
 
 export default function Navbar({
   currentPage,
   setCurrentPage,
   currentUser,
   setCurrentUser,
-  currentProfile,
   setShowAuthModal
 }) {
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
     { id: 'home', label: 'Accueil' },
     { id: 'hotels', label: 'Hôtels' },
     { id: 'restaurants', label: 'Restaurants' },
-    { id: 'sites', label: 'Sites Touristiques' },
-    { id: 'partner', label: 'Devenir Partenaire' },
-    { id: 'about', label: 'À Propos' },
+    { id: 'sites', label: 'Sites' },
+    { id: 'partner', label: 'Partenaires' },
+    { id: 'about', label: 'À propos' },
     { id: 'contact', label: 'Contact' },
   ];
 
-  const isAdmin = isAdminUser(currentUser, currentProfile);
-
-  const visibleMenuItems = isAdmin
-    ? [...menuItems, { id: 'admin', label: 'Administration' }]
-    : menuItems;
+  function navigate(page) {
+    setCurrentPage(page);
+    setIsMenuOpen(false);
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setCurrentUser(null);
+    setIsMenuOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        <div className="flex justify-between items-center h-20">
-
-          {/* LOGO */}
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setCurrentPage('home')}
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-200/80 bg-white/95 backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-[72px] items-center justify-between gap-4">
+          <button
+            onClick={() => navigate('home')}
+            className="flex items-center gap-3 text-left"
+            aria-label="Destination Kongo"
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">DK</span>
-            </div>
-
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
+              <img
+                src="/favicon.svg"
+                alt="Destination Kongo"
+                className="h-9 w-9 object-contain"
+              />
+            </span>
+            <span>
+              <span className="block text-base font-black tracking-tight text-gray-950">
                 Destination Kongo
-              </h1>
-              <p className="text-xs text-gray-600 hidden sm:block">
+              </span>
+              <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700 sm:block">
                 L'hospitalité royale au cœur de l'afrique
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </button>
 
-          {/* MENU DESKTOP */}
-          <div className="hidden lg:flex items-center space-x-8">
-
-            {visibleMenuItems.map((item) => (
+          <div className="hidden items-center gap-1 lg:flex">
+            {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setCurrentPage(item.id)}
-                className={`text-sm font-medium transition-colors ${
+                onClick={() => navigate(item.id)}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
                   currentPage === item.id
-                    ? 'text-blue-600'
-                    : 'text-gray-700 hover:text-blue-600'
+                    ? 'bg-gray-950 text-white'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="hidden items-center gap-3 lg:flex">
+            {currentUser ? (
+              <>
+                <button
+                  onClick={() => navigate('admin-hotel')}
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-bold text-gray-800 hover:bg-gray-50"
+                >
+                  <UserRound size={16} />
+                  Dashboard
+                </button>
+                <span className="max-w-40 truncate text-sm font-semibold text-gray-500">
+                  {currentUser.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-red-600 hover:bg-red-50"
+                  aria-label="Déconnexion"
+                >
+                  <LogOut size={18} />
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="inline-flex items-center gap-2 rounded-lg bg-gray-950 px-4 py-2.5 text-sm font-bold text-white hover:bg-blue-800"
+              >
+                <UserRound size={16} />
+                Se connecter
+              </button>
+            )}
+          </div>
+
+          <button
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-800 lg:hidden"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label="Menu"
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div className="border-t border-gray-200 bg-white lg:hidden">
+          <div className="mx-auto max-w-7xl space-y-1 px-4 py-4">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.id)}
+                className={`block w-full rounded-lg px-4 py-3 text-left text-sm font-bold ${
+                  currentPage === item.id
+                    ? 'bg-gray-950 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 {item.label}
               </button>
             ))}
 
-            {/* AUTH */}
             {currentUser ? (
-              <div className="flex items-center space-x-4 pl-4 border-l border-gray-200">
-                <span className="text-sm font-medium text-gray-700 max-w-[150px] truncate">
-                  👤 {currentUser.email}
-                </span>
-
+              <div className="space-y-2 border-t border-gray-100 pt-3">
+                <button
+                  onClick={() => navigate('admin-hotel')}
+                  className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-left text-sm font-bold text-gray-800"
+                >
+                  Dashboard établissement
+                </button>
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-medium text-red-600 hover:text-red-700"
+                  className="block w-full rounded-lg px-4 py-3 text-left text-sm font-bold text-red-600"
                 >
                   Déconnexion
                 </button>
               </div>
             ) : (
               <button
-                onClick={() => setShowAuthModal(true)}
-                className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                onClick={() => {
+                  setShowAuthModal(true);
+                  setIsMenuOpen(false);
+                }}
+                className="mt-3 block w-full rounded-lg bg-gray-950 px-4 py-3 text-left text-sm font-bold text-white"
               >
                 Se connecter
               </button>
             )}
-
-          </div>
-
-          {/* MOBILE BUTTON */}
-          <button
-            className="lg:hidden px-3 py-2 border rounded-lg"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? '✕' : '☰'}
-          </button>
-
-        </div>
-      </div>
-
-      {/* MOBILE MENU */}
-      {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t">
-          <div className="px-4 py-4 space-y-3">
-
-            {visibleMenuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setCurrentPage(item.id);
-                  setIsMenuOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 rounded-lg ${
-                  currentPage === item.id
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-
-            {/* ADMIN */}
-            <button
-              onClick={() => {
-                setCurrentPage("admin-hotel");
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left px-4 py-2 text-gray-700"
-            >
-              Dashboard Hôtel
-            </button>
-
           </div>
         </div>
       )}

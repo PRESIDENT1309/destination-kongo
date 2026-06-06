@@ -1,196 +1,192 @@
 import {
+  ArrowRight,
+  BadgeCheck,
   Hotel,
-  Utensils,
+  MapPin,
   Mountain,
+  ShieldCheck,
+  Sparkles,
   TrendingUp,
-  MapPin
+  Utensils,
 } from "lucide-react";
+
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1501117716987-c8e1ecb2105a?auto=format&fit=crop&w=900&q=80";
 
 export default function HomeView({
   establishments = [],
-  setCurrentPage
+  setCurrentPage,
+  setViewedPlace
 }) {
+  const hotelsCount = establishments.filter((e) => e.type === "hotel").length;
+  const restaurantsCount = establishments.filter((e) => e.type === "restaurant").length;
+  const sitesCount = establishments.filter((e) => e.type === "site" || e.type === "tourist_site").length;
 
-  const hotelsCount = establishments.filter(e => e.type === "hotel").length;
-  const restaurantsCount = establishments.filter(e => e.type === "restaurant").length;
-  const sitesCount = establishments.filter(e => e.type === "site" || e.type === "tourist_site").length;
+  const categories = [
+    {
+      title: "Hôtels",
+      count: `${hotelsCount} établissements`,
+      page: "hotels",
+      icon: Hotel,
+      image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Restaurants",
+      count: `${restaurantsCount} adresses`,
+      page: "restaurants",
+      icon: Utensils,
+      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Sites touristiques",
+      count: `${sitesCount} lieux`,
+      page: "sites",
+      icon: Mountain,
+      image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=900&q=80",
+    },
+  ];
 
   const popular = establishments.slice(0, 6);
 
   return (
-    <div className="bg-[#f8f8f8]">
-
-      {/* SECTION 1 - 3 GRANDS BLOCS CATEGORIES */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-
-        <h2 className="text-3xl font-black mb-10">
-          Explorer par catégorie
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-6">
-
-          {/* HOTELS */}
-          <div
-            onClick={() => setCurrentPage("hotels")}
-            className="bg-white rounded-[30px] overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb"
-              className="h-52 w-full object-cover"
-            />
-
-            <div className="p-6">
-              <Hotel className="mb-3" />
-              <h3 className="text-xl font-black">Hôtels</h3>
-              <p className="text-gray-500">
-                {hotelsCount} établissements disponibles
-              </p>
-            </div>
+    <div className="bg-gray-50">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">
+              Explorer
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-gray-950 sm:text-4xl">
+              Choisissez votre expérience
+            </h2>
           </div>
+          <p className="max-w-xl text-sm leading-6 text-gray-600">
+            Des catégories claires, des fiches lisibles et des actions directes pour réserver plus vite sur mobile comme sur desktop.
+          </p>
+        </div>
 
-          {/* RESTAURANTS */}
-          <div
-            onClick={() => setCurrentPage("restaurants")}
-            className="bg-white rounded-[30px] overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1"
-              className="h-52 w-full object-cover"
-            />
-
-            <div className="p-6">
-              <Utensils className="mb-3" />
-              <h3 className="text-xl font-black">Restaurants</h3>
-              <p className="text-gray-500">
-                {restaurantsCount} restaurants disponibles
-              </p>
-            </div>
-          </div>
-
-          {/* SITES */}
-          <div
-            onClick={() => setCurrentPage("sites")}
-            className="bg-white rounded-[30px] overflow-hidden shadow-lg hover:shadow-2xl transition cursor-pointer"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-              className="h-52 w-full object-cover"
-            />
-
-            <div className="p-6">
-              <Mountain className="mb-3" />
-              <h3 className="text-xl font-black">Sites touristiques</h3>
-              <p className="text-gray-500">
-                {sitesCount} lieux à découvrir
-              </p>
-            </div>
-          </div>
-
+        <div className="grid gap-4 md:grid-cols-3">
+          {categories.map(({ title, count, page, icon: Icon, image }) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className="group overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden bg-gray-200">
+                <img
+                  src={image}
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  alt={title}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-950/70 to-transparent" />
+                <span className="absolute bottom-4 left-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white text-blue-700 shadow">
+                  <Icon size={20} />
+                </span>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-black text-gray-950">{title}</h3>
+                    <p className="mt-1 text-sm font-semibold text-gray-500">{count}</p>
+                  </div>
+                  <ArrowRight className="text-gray-300 transition group-hover:translate-x-1 group-hover:text-blue-700" size={20} />
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       </section>
 
-      {/* SECTION 2 - DESTINATIONS POPULAIRES */}
-      <section className="max-w-7xl mx-auto px-6 py-10">
+      <section className="border-y border-gray-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-emerald-700">
+              Sélection
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-gray-950">
+              Destinations populaires
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-gray-600">
+              Une vitrine rapide pour consulter les lieux récemment référencés et ouvrir une fiche sans perdre le fil.
+            </p>
+          </div>
 
-        <h2 className="text-2xl font-black mb-6">
-          Destinations populaires
-        </h2>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {(popular.length > 0 ? popular : categories).map((item, index) => {
+              const isPlace = Boolean(item.id);
+              const image = isPlace ? item?.images?.[0] || FALLBACK_IMAGE : item.image;
+              const title = isPlace ? item.name : item.title;
+              const city = isPlace ? item.city || "RDC" : "Destination Kongo";
 
-        <div className="grid md:grid-cols-3 gap-6">
+              return (
+                <button
+                  key={item.id || item.page}
+                  onClick={() => isPlace ? setViewedPlace?.(item) : setCurrentPage(item.page)}
+                  className="group rounded-lg border border-gray-200 bg-gray-50 p-2 text-left transition hover:border-blue-200 hover:bg-white hover:shadow-lg"
+                >
+                  <img
+                    src={image}
+                    className="aspect-[4/3] w-full rounded-md object-cover"
+                    alt={title}
+                    loading={index < 2 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                  <div className="p-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
+                      <MapPin size={13} />
+                      {city}
+                    </div>
+                    <h3 className="mt-2 line-clamp-2 font-black text-gray-950">{title}</h3>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-          {popular.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition"
-            >
-
-              <img
-                src={item?.images?.[0] || "https://images.unsplash.com/photo-1501117716987-c8e1ecb2105a"}
-                className="h-40 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <div className="flex items-center text-gray-500">
-                  <MapPin size={14} />
-                  <span className="ml-2 text-sm">{item.city}</span>
-                </div>
-
-                <h3 className="font-bold mt-2">{item.name}</h3>
-              </div>
-
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid overflow-hidden rounded-lg border border-gray-200 bg-gray-950 text-white md:grid-cols-4">
+          {[
+            [establishments.length, "Établissements"],
+            [26, "Provinces"],
+            ["1000+", "Voyageurs"],
+            ["24/7", "Support"],
+          ].map(([value, label]) => (
+            <div key={label} className="border-b border-white/10 p-6 text-center md:border-b-0 md:border-r last:border-r-0">
+              <p className="text-3xl font-black">{value}</p>
+              <p className="mt-1 text-sm font-semibold text-white/60">{label}</p>
             </div>
           ))}
-
         </div>
-
       </section>
 
-      {/* SECTION 3 - STATS */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-
-        <div className="bg-blue-600 text-white rounded-[30px] grid md:grid-cols-4 text-center p-10">
-
-          <div>
-            <h1 className="text-4xl font-black">{establishments.length}</h1>
-            <p>Établissements</p>
-          </div>
-
-          <div>
-            <h1 className="text-4xl font-black">26</h1>
-            <p>Provinces</p>
-          </div>
-
-          <div>
-            <h1 className="text-4xl font-black">1000+</h1>
-            <p>Voyageurs</p>
-          </div>
-
-          <div>
-            <h1 className="text-4xl font-black">24/7</h1>
-            <p>Support</p>
-          </div>
-
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">
+            Fiabilité
+          </p>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-gray-950">
+            Une expérience pensée pour décider vite
+          </h2>
         </div>
 
-      </section>
-
-      {/* SECTION 4 - WHY DESTINATION KONGO */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-
-        <h2 className="text-2xl font-black mb-6">
-          Pourquoi Destination Kongo ?
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-6">
-
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <TrendingUp />
-            <h3 className="font-bold mt-3">Croissance locale</h3>
-            <p className="text-gray-500 text-sm mt-2">
-              Nous valorisons les établissements du Congo.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <Hotel />
-            <h3 className="font-bold mt-3">Réservation simple</h3>
-            <p className="text-gray-500 text-sm mt-2">
-              Un seul système pour tous les lieux.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <MapPin />
-            <h3 className="font-bold mt-3">Découverte locale</h3>
-            <p className="text-gray-500 text-sm mt-2">
-              Explorez les trésors cachés du pays.
-            </p>
-          </div>
-
+        <div className="grid gap-4 md:grid-cols-4">
+          {[
+            [ShieldCheck, "Sécurité", "Comptes, réservations et paiements suivis."],
+            [BadgeCheck, "Validation", "Contrôle admin pour les partenaires."],
+            [TrendingUp, "Croissance locale", "Visibilité pour les acteurs du tourisme."],
+            [Sparkles, "Découverte", "Une sélection simple à parcourir."],
+          ].map(([Icon, title, text]) => (
+            <div key={title} className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+              <Icon className="text-blue-700" size={22} />
+              <h3 className="mt-4 font-black text-gray-950">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
         </div>
-
       </section>
-
     </div>
   );
 }

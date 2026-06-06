@@ -1,119 +1,92 @@
+import { BadgeCheck, Globe2, ShieldCheck, TrendingUp } from "lucide-react";
+
 export default function AboutPage() {
+  const values = [
+    [ShieldCheck, "Confiance", "Des établissements vérifiés et un suivi clair des réservations."],
+    [Globe2, "Découverte", "Une vitrine moderne pour les destinations de la RDC."],
+    [TrendingUp, "Impact", "Plus de visibilité et de revenus pour les acteurs locaux."],
+  ];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50 pt-24">
+      <section className="relative overflow-hidden bg-gray-950 text-white">
+        <img
+          src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
+          alt="Paysage de voyage"
+          className="absolute inset-0 h-full w-full object-cover opacity-45"
+          loading="eager"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/78 to-gray-950/35" />
 
-      {/* HERO */}
-      <div className="relative bg-black text-white py-28 px-6 text-center overflow-hidden">
-
-        <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1501785888041-af3ef285b470')] bg-cover bg-center"></div>
-
-        <div className="relative max-w-4xl mx-auto">
-
-          <h1 className="text-5xl md:text-6xl font-black">
+        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-200">
+            À propos
+          </p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight sm:text-6xl">
             À Propos de Destination Kongo
           </h1>
-
-          <p className="mt-6 text-white/80 text-lg leading-7">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-white/74">
             La plateforme qui connecte les voyageurs aux hôtels, restaurants et sites touristiques de la République Démocratique du Congo.
           </p>
+        </div>
+      </section>
 
+      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.18em] text-blue-700">
+            Notre histoire
+          </p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-gray-950">
+            Rendre les lieux visibles, réservables et fiables.
+          </h2>
         </div>
 
-      </div>
+        <div className="space-y-5 text-base leading-8 text-gray-600">
+          <p>
+            Destination Kongo est née d’une vision simple : rendre le tourisme en RDC plus accessible, moderne et digitalisé.
+          </p>
+          <p>
+            La plateforme centralise les hôtels, restaurants et sites touristiques, tout en donnant aux partenaires les outils nécessaires pour suivre les réservations, les documents et la relation client.
+          </p>
+        </div>
+      </section>
 
-      {/* STORY SECTION */}
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <section className="border-y border-gray-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+          {values.map(([Icon, title, text]) => (
+            <div key={title} className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+              <Icon className="text-blue-700" size={24} />
+              <h3 className="mt-4 text-lg font-black text-gray-950">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-        <h2 className="text-3xl font-black mb-6">
-          Notre histoire
-        </h2>
-
-        <p className="text-gray-600 leading-8 text-lg">
-          Destination Kongo est née d’une vision simple : rendre le tourisme en RDC
-          plus accessible, moderne et digitalisé. Trop de lieux incroyables restent
-          invisibles. Nous avons décidé de changer cela en créant une plateforme unique
-          qui centralise les hôtels, restaurants et sites touristiques.
-        </p>
-
-        <p className="text-gray-600 leading-8 text-lg mt-6">
-          Aujourd’hui, nous construisons un écosystème complet pour permettre aux voyageurs
-          de découvrir facilement le Congo, et aux établissements locaux de se développer
-          grâce au digital.
-        </p>
-
-      </div>
-
-      {/* VALUES */}
-      <div className="bg-gray-50 py-16">
-
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-
-          <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-black mb-2">🎯 Mission</h3>
-            <p className="text-gray-600">
-              Digitaliser le tourisme en RDC et simplifier l’accès aux établissements locaux.
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-black mb-2">🌍 Vision</h3>
-            <p className="text-gray-600">
-              Devenir la plateforme leader du tourisme en Afrique centrale.
-            </p>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow hover:shadow-lg transition">
-            <h3 className="text-xl font-black mb-2">⚡ Impact</h3>
-            <p className="text-gray-600">
-              Créer de la visibilité, des revenus et des emplois pour les acteurs locaux.
-            </p>
-          </div>
-
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid overflow-hidden rounded-lg bg-gray-950 text-white md:grid-cols-3">
+          {[
+            ["+1000", "Établissements potentiels"],
+            ["24/7", "Support client"],
+            ["100%", "Made in RDC"],
+          ].map(([value, label]) => (
+            <div key={label} className="border-b border-white/10 p-8 text-center md:border-b-0 md:border-r last:border-r-0">
+              <p className="text-4xl font-black">{value}</p>
+              <p className="mt-2 text-sm font-semibold text-white/60">{label}</p>
+            </div>
+          ))}
         </div>
 
-      </div>
-
-      {/* NUMBERS SECTION */}
-      <div className="bg-black text-white py-16">
-
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 text-center gap-10">
-
-          <div>
-            <h2 className="text-5xl font-black">+1000</h2>
-            <p className="text-white/70 mt-2">Établissements référencés</p>
-          </div>
-
-          <div>
-            <h2 className="text-5xl font-black">24/7</h2>
-            <p className="text-white/70 mt-2">Support client</p>
-          </div>
-
-          <div>
-            <h2 className="text-5xl font-black">100%</h2>
-            <p className="text-white/70 mt-2">Made in RDC</p>
-          </div>
-
+        <div className="mt-12 rounded-lg border border-blue-100 bg-blue-50 p-6 sm:p-8">
+          <BadgeCheck className="text-blue-700" size={28} />
+          <h2 className="mt-4 text-2xl font-black text-gray-950">
+            Une seule plateforme pour tous les comptes.
+          </h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-600">
+            Voyageurs, hôtels, restaurants — tout le monde est connecté au même écosystème.
+          </p>
         </div>
-
-      </div>
-
-      {/* CTA */}
-      <div className="py-20 text-center px-6">
-
-        <h2 className="text-3xl font-black mb-4">
-          Rejoignez la révolution du tourisme en RDC
-        </h2>
-
-        <p className="text-gray-600 mb-8">
-          Voyageurs, hôtels, restaurants — tout le monde est connecté au même écosystème.
-        </p>
-
-        <button className="bg-black text-white px-8 py-4 rounded-2xl font-bold hover:scale-105 transition">
-          Commencer maintenant
-        </button>
-
-      </div>
-
+      </section>
     </div>
   );
 }

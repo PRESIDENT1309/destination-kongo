@@ -1,84 +1,92 @@
+import { ArrowRight, Hotel, MapPin, Mountain, Search, Utensils } from "lucide-react";
+import heroImage from "../assets/hero.png";
+
 export default function Hero({
   setCurrentPage,
   searchQuery,
   setSearchQuery,
-}){
+}) {
+  const quickLinks = [
+    { label: "Hôtels", page: "hotels", icon: Hotel },
+    { label: "Restaurants", page: "restaurants", icon: Utensils },
+    { label: "Sites", page: "sites", icon: Mountain },
+  ];
 
   return (
-    <header className="relative h-[85vh] flex items-center justify-center overflow-hidden">
-
-      {/* IMAGE BACKGROUND */}
+    <header className="relative min-h-[92svh] overflow-hidden bg-gray-950 pt-24 text-white">
       <img
-        src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
-        className="absolute inset-0 w-full h-full object-cover scale-105"
-        alt="Paysage naturel en RDC"
+        src={heroImage}
+        className="absolute inset-0 h-full w-full object-cover opacity-70"
+        alt="Destination touristique en RDC"
+        fetchPriority="high"
       />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.92),rgba(15,23,42,0.62),rgba(15,23,42,0.18))]" />
 
-      {/* OVERLAY PREMIUM */}
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative z-10 mx-auto flex min-h-[calc(92svh-6rem)] max-w-7xl items-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="max-w-3xl animate-fade-up">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur">
+            <MapPin size={14} />
+            République Démocratique du Congo
+          </div>
 
-      {/* CONTENT */}
-      <div className="relative z-10 text-center text-white max-w-3xl px-6">
+          <h1 className="mt-6 text-4xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-7xl">
+            Explorez la RDC autrement
+          </h1>
 
-        {/* BRAND */}
-        <p className="text-sm tracking-[0.3em] text-white/70 uppercase">
-          Destination Kongo
-        </p>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-white/78 sm:text-lg">
+            Hôtels, restaurants et sites touristiques réunis dans une seule plateforme.
+          </p>
 
-        {/* TITLE */}
-        <h1 className="text-4xl md:text-6xl font-black mt-6 leading-tight">
-          Explorez la RDC autrement
-        </h1>
+          <div className="mt-8 w-full max-w-2xl rounded-lg border border-white/15 bg-white p-2 shadow-2xl shadow-black/20">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <label className="flex min-h-12 flex-1 items-center gap-3 rounded-md bg-gray-50 px-4 text-gray-700">
+                <Search size={18} className="text-gray-400" />
+                <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Rechercher un hôtel, restaurant ou site"
+                  className="w-full bg-transparent text-sm font-semibold outline-none placeholder:text-gray-400"
+                />
+              </label>
 
-        <p className="text-white/70 mt-4 text-lg">
-          Hôtels, restaurants et sites touristiques réunis dans une seule plateforme.
-        </p>
+              <button
+                onClick={() => setCurrentPage("hotels", { preserveFilters: true })}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-blue-700 px-5 text-sm font-black text-white transition hover:bg-blue-800"
+              >
+                Explorer
+                <ArrowRight size={17} />
+              </button>
+            </div>
+          </div>
 
-        {/* SIMPLE SEARCH */}
-        <div className="mt-10 bg-white rounded-2xl p-2 flex items-center max-w-xl mx-auto">
+          <div className="mt-5 flex flex-wrap gap-2">
+            {quickLinks.map(({ label, page, icon: Icon }) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page, { preserveFilters: true })}
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-bold text-white backdrop-blur transition hover:bg-white hover:text-gray-950"
+              >
+                <Icon size={16} />
+                {label}
+              </button>
+            ))}
+          </div>
 
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher un lieu, hôtel ou restaurant..."
-            className="flex-1 px-4 py-3 outline-none text-black"
-          />
-
-          <button
-            onClick={() => setCurrentPage("hotels")}
-            className="bg-black text-white px-6 py-3 rounded-xl font-bold"
-          >
-            Explorer
-          </button>
-
+          <dl className="mt-10 grid max-w-2xl grid-cols-3 divide-x divide-white/15 rounded-lg border border-white/15 bg-white/10 p-4 text-center backdrop-blur">
+            <div>
+              <dt className="text-2xl font-black">26</dt>
+              <dd className="text-xs font-semibold text-white/65">Provinces</dd>
+            </div>
+            <div>
+              <dt className="text-2xl font-black">24/7</dt>
+              <dd className="text-xs font-semibold text-white/65">Support</dd>
+            </div>
+            <div>
+              <dt className="text-2xl font-black">DK</dt>
+              <dd className="text-xs font-semibold text-white/65">RDC locale</dd>
+            </div>
+          </dl>
         </div>
-
-        {/* QUICK ACTIONS */}
-        <div className="flex justify-center gap-3 mt-6 flex-wrap">
-
-          <button
-            onClick={() => setCurrentPage("hotels")}
-            className="bg-white/10 backdrop-blur px-5 py-2 rounded-full"
-          >
-            Hôtels
-          </button>
-
-          <button
-            onClick={() => setCurrentPage("restaurants")}
-            className="bg-white/10 backdrop-blur px-5 py-2 rounded-full"
-          >
-            Restaurants
-          </button>
-
-          <button
-            onClick={() => setCurrentPage("sites")}
-            className="bg-white/10 backdrop-blur px-5 py-2 rounded-full"
-          >
-            Sites
-          </button>
-
-        </div>
-
       </div>
     </header>
   );

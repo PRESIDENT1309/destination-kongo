@@ -1,90 +1,88 @@
+import { Mail, MapPin, Phone } from "lucide-react";
+
 export default function Footer({ currentPage, onNavigate }) {
+  const navLinks = [
+    ["home", "Accueil"],
+    ["hotels", "Hôtels"],
+    ["restaurants", "Restaurants"],
+    ["sites", "Sites touristiques"],
+  ];
+
+  const companyLinks = [
+    ["about", "Notre mission"],
+    ["partner", "Devenir partenaire"],
+    ["contact", "Contact"],
+  ];
+
   return (
-    <footer className="bg-gray-900 text-white mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Logo et Description */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4 cursor-pointer" onClick={() => onNavigate('home')}>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">DK</span>
+    <footer className="mt-auto border-t border-gray-200 bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
+          <button
+            className="text-left"
+            onClick={() => onNavigate("home")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-sm">
+                <img src="/favicon.svg" alt="Destination Kongo" className="h-10 w-10 object-contain" />
+              </span>
+              <div>
+                <h3 className="text-lg font-black text-gray-950">Destination Kongo</h3>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+                  L'hospitalité royale au cœur de l'afrique
+                </p>
               </div>
-              <h3 className="text-lg font-bold">Destination Kongo</h3>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="mt-5 max-w-sm text-sm leading-6 text-gray-600">
               L'hospitalité royale au cœur de l'afrique
             </p>
-          </div>
+          </button>
 
-          {/* Navigation */}
           <div>
-            <h4 className="font-semibold mb-4 text-white">Navigation</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <button onClick={() => onNavigate('home')} className={currentPage === 'home' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Accueil
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('hotels')} className={currentPage === 'hotels' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Hôtels
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('restaurants')} className={currentPage === 'restaurants' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Restaurants
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('sites')} className={currentPage === 'sites' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Sites Touristiques
-                </button>
-              </li>
+            <h4 className="text-sm font-black uppercase tracking-[0.14em] text-gray-950">Navigation</h4>
+            <ul className="mt-4 space-y-3 text-sm">
+              {navLinks.map(([page, label]) => (
+                <li key={page}>
+                  <button
+                    onClick={() => onNavigate(page)}
+                    className={currentPage === page ? "font-bold text-blue-700" : "font-semibold text-gray-500 hover:text-gray-950"}
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* À Propos */}
           <div>
-            <h4 className="font-semibold mb-4 text-white">À Propos</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <button onClick={() => onNavigate('about')} className={currentPage === 'about' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Notre Mission
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('partner')} className={currentPage === 'partner' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Devenir Partenaire
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('contact')} className={currentPage === 'contact' ? 'text-blue-400' : 'text-gray-400 hover:text-white'}>
-                  Contact
-                </button>
-              </li>
+            <h4 className="text-sm font-black uppercase tracking-[0.14em] text-gray-950">Plateforme</h4>
+            <ul className="mt-4 space-y-3 text-sm">
+              {companyLinks.map(([page, label]) => (
+                <li key={page}>
+                  <button
+                    onClick={() => onNavigate(page)}
+                    className={currentPage === page ? "font-bold text-blue-700" : "font-semibold text-gray-500 hover:text-gray-950"}
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-semibold mb-4 text-white">Contact</h4>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li>📍 Kinshasa, RDC</li>
-              <li>📞 +243 97 13 47 427</li>
-              <li>✉️ contact@destinationkongo.cd</li>
+            <h4 className="text-sm font-black uppercase tracking-[0.14em] text-gray-950">Contact</h4>
+            <ul className="mt-4 space-y-3 text-sm font-semibold text-gray-600">
+              <li className="flex items-center gap-2"><MapPin size={16} /> Kinshasa, RDC</li>
+              <li className="flex items-center gap-2"><Phone size={16} /> +243 97 13 47 427</li>
+              <li className="flex items-center gap-2"><Mail size={16} /> contact@destinationkongo.cd</li>
             </ul>
-            <div className="flex space-x-4 mt-4 text-sm text-gray-400">
-              <a href="#" className="hover:text-blue-500 transition-colors">Facebook</a>
-              <a href="#" className="hover:text-pink-500 transition-colors">Instagram</a>
-            </div>
           </div>
-
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; 2026 Destination Kongo. Tous droits réservés.</p>
+        <div className="mt-10 flex flex-col gap-3 border-t border-gray-200 pt-6 text-sm font-semibold text-gray-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Destination Kongo. Tous droits réservés.</p>
+          <p>L'hospitalité royale au cœur de l'afrique</p>
         </div>
       </div>
     </footer>
